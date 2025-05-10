@@ -5,30 +5,117 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>TapCloud</title>
   <link rel="stylesheet" href="/style.css" />
+  <!-- World ID SDK -->
   <script src="https://unpkg.com/@worldcoin/id@1.0.0-beta.4"></script>
 </head>
 <body>
- <div id="app">
-  <div class="topbar">
-    <img id="logo" src="/Cloud-tap.png" alt="TapCloud Logo" />
-    <span class="username">@yourname</span>
+  <div id="app">
+    <div class="topbar">
+      <img id="logo" src="/Cloud-tap.png" alt="TapCloud Logo" />
+      <span class="username">@yourname</span>
+    </div>
+
+    <div class="cloud-area">
+      <button id="tapButton">TAP TO FARM</button>
+      <p id="counter">0 TCL</p>
+      <button id="claimButton" disabled>Claim (24h)</button>
+
+      <div id="world-id-container"></div> <!-- World ID widget will appear here -->
+    </div>
+
+    <div class="bottom-nav">
+      <button>Task</button>
+      <button>Invite</button>
+      <button>Leaderboard</button>
+      <button>Profile</button>
+    </div>
   </div>
-<div class="cloud-area">
-  <button id="tapButton">TAP TO FARM</button>
-  <p id="counter">0 TCL</p>
-  <button id="claimButton" disabled>Claim (24h)</button>
 
-  <div id="world-id-container"></div> <!-- World ID will appear here -->
-</div>
+  <script type="module">
+    // JavaScript logic for TAP TO FARM, claiming TCL, and World ID verification
+    
+    let count = 0;
+    const button = document.getElementById("tapButton");
+    const counter = document.getElementById("counter");
+    const claimButton = document.getElementById("claimButton");
 
-  <div class="bottom-nav">
-    <button>Task</button>
-    <button>Invite</button>
-    <button>Leaderboard</button>
-    <button>Profile</button>
-  </div>
-</div>
+    const claimCooldown = 24 * 60 * 60 * 1000; // 24 hours
+    let lastClaim = parseInt(localStorage.getItem('lastClaim')) || 0;
 
-<script type="module" src="/main.js"></script>
+    function updateClaimButton() {
+      const now = Date.now();
+      const timeRemaining = claimCooldown - (now - lastClaim);
+
+      if (timeRemaining > 0) {
+        const hours = Math.floor(timeRemaining / (1000 * 60 * 60));
+        const minutes = Math.floor((timeRemaining % (1000 * 60 * 60)) / (1000 * 60));
+        const seconds = Math.floor((timeRemaining % (1000 * 60)) / 1000);
+
+        const formatted = `${String(hours).padStart(2, '0')}:${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;
+        claimButton.textContent = `Claim available in ${formatted}`;
+        claimButton.disabled = true;
+      } else {
+        claimButton.textContent = "Claim Now";
+        claimButton.disabled = false;
+      }
+    }
+
+    // Run update every second
+    setInterval(updateClaimButton, 1000);
+    updateClaimButton();
+
+    claimButton.addEventListener("click", () => {
+      if (Date.now() - lastClaim >= claimCooldown) {
+        count += 1;
+        counter.textContent = `${count} TCL`;
+        lastClaim = Date.now();
+        localStorage.setItem('lastClaim', lastClaim);
+        updateClaimButton();
+      }
+    });
+
+    button.addEventListener("click", () => {
+      count += 1;
+      counter.textContent = `${count} TCL`;
+
+      counter.classList.add("count-animation");
+      setTimeout(() => {
+        counter.classList.remove("count-animation");
+      }, 500);
+    });
+
+    // World ID Widget setup
+    window.onload = () => {
+      const worldId = new WorldID({
+        appId: "app_8fb6097455c4b53031a8f1d50b03ac11", // Your World App ID
+        container: document.getElementById("world-id-container"), // Where to render the widget
+        action: "register", // action can be "register" or "verify"
+        onSuccess: (response) => {
+          console.log("World ID success:", response);
+          // Handle success logic, maybe store user details or perform an action
+        },
+        onError: (error) => {
+          console.error("World ID error:", error);
+          // Handle error logic
+        }
+      });
+      worldId.render();
+    };
+
+    // CSS animation for counter
+    const style = document.createElement("style");
+    style.innerHTML = `
+      .count-animation {
+        animation: counterBounce 0.5s ease;
+      }
+
+      @keyframes counterBounce {
+        0% { transform: scale(1); }
+        50% { transform: scale(1.1); }
+        100% { transform: scale(1); }
+      }
+    `;
+    document.head.appendChild(style);
+  </script>
 </body>
 </html>
