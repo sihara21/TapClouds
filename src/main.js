@@ -73,25 +73,28 @@ window.addEventListener("DOMContentLoaded", () => {
       container_id: "world-id-container",
       theme: "light",
       onSuccess: async (proof) => {
-        console.log("✅ Verified!", proof);
+  console.log("✅ Verified!", proof);
+  alert("Verification successful!");
 
-        // Kirim proof ke backend (opsional)
-        try {
-          const res = await fetch('/api/verify', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify(proof)
-          });
-          const result = await res.json();
-          if (result.success) {
-            alert("✅ World ID verification successful!");
-          } else {
-            alert("❌ Server rejected verification: " + result.error);
-          }
-        } catch (err) {
-          alert("❌ Could not reach server.");
-        }
-      },
+  try {
+    const res = await fetch("https://your-backend-domain.com/api/verify", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(proof)
+    });
+
+    const result = await res.json();
+    if (result.success) {
+      console.log("🎉 Backend verified the proof!");
+      // Tambahkan bonus TCL atau buka akses premium
+    } else {
+      alert("❌ Verification rejected by backend");
+    }
+  } catch (err) {
+    console.error("🚨 Error sending to backend:", err);
+  }
+}
+
       onError: (err) => {
         console.error("❌ Verification Error:", err);
         alert("Verification failed. Please try again.");
