@@ -1,3 +1,4 @@
+// TAP TO FARM + CLAIM SYSTEM
 let count = 0;
 const button = document.getElementById("tapButton");
 const counter = document.getElementById("counter");
@@ -24,7 +25,6 @@ function updateClaimButton() {
   }
 }
 
-// Jalankan update setiap detik
 setInterval(updateClaimButton, 1000);
 updateClaimButton();
 
@@ -62,3 +62,25 @@ style.innerHTML = `
   }
 `;
 document.head.appendChild(style);
+
+// WORLD ID VERIFICATION (MiniKit JS Widget via CDN)
+window.addEventListener("DOMContentLoaded", () => {
+  if (window.WorldIDWidget) {
+    new window.WorldIDWidget({
+      action_id: "app_8fb6097455c4b53031a8f1d50b03ac11", // Ganti sesuai World App ID kamu
+      signal: "tapcloud_user_verification",
+      app_name: "TapCloud",
+      container_id: "world-id-container",
+      theme: "light",
+      onSuccess: (proof) => {
+        console.log("✅ Verified!", proof);
+        alert("Verification successful!");
+        // Kirim proof ke backend kalau diperlukan
+      },
+      onError: (err) => {
+        console.error("❌ Verification Error:", err);
+        alert("Verification failed. Please try again.");
+      }
+    });
+  }
+});
