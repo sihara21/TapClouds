@@ -75,19 +75,24 @@
     });
 
     window.onload = () => {
-      window.worldID.init({
-        app_id: "app_8fb6097455c4b53031a8f1d50b03ac11",
-        action: "register",
-        signal: "tapcloud_user", // bisa diubah sesuai use case
-        container: "world-id-container",
-        onSuccess: (proof) => {
-          console.log("World ID success:", proof);
-        },
-        onError: (err) => {
-          console.error("World ID error:", err);
-        },
-      });
-    };
+  if (typeof WorldID !== "undefined") {
+    const worldId = new WorldID({
+      appId: "app_8fb6097455c4b53031a8f1d50b03ac11",
+      container: document.getElementById("world-id-container"),
+      action: "register_tapcloud",
+      onSuccess: (response) => {
+        console.log("✅ World ID success:", response);
+      },
+      onError: (error) => {
+        console.error("❌ World ID error:", error);
+      }
+    });
+    worldId.render();
+  } else {
+    console.error("❌ WorldID SDK not loaded.");
+  }
+};
+
 
     // Counter animation
     const style = document.createElement("style");
