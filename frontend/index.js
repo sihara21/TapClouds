@@ -1,10 +1,12 @@
 // frontend/index.js
 
-// Simulasi data dari hasil scan World ID (gantilah ini dengan hasil real dari widget)
+document.getElementById("verifyBtn").addEventListener("click", verifyWorldId);
+
+// Dummy data (seharusnya ini didapat dari World ID widget di production)
 const worldIdProof = {
-  nullifier_hash: "example_hash",
-  merkle_root: "example_root",
-  proof: "example_proof",
+  nullifier_hash: "dummy_hash_123",
+  merkle_root: "dummy_root_456",
+  proof: "dummy_proof_789",
   credential_type: "orb"
 };
 
@@ -16,19 +18,16 @@ function verifyWorldId() {
     },
     body: JSON.stringify(worldIdProof)
   })
-    .then(response => response.json())
+    .then(res => res.json())
     .then(data => {
       if (data.success) {
-        alert("✅ World ID verified successfully!");
+        alert("✅ Verification successful!");
       } else {
         alert("❌ Verification failed: " + data.message);
       }
     })
-    .catch(error => {
-      console.error("Error verifying:", error);
-      alert("❌ Error connecting to backend.");
+    .catch(err => {
+      console.error("Error:", err);
+      alert("❌ Network error.");
     });
 }
-
-// Call this function when user submits verification
-// verifyWorldId();
