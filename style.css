@@ -1,0 +1,82 @@
+body {
+  margin: 0;
+  font-family: 'Arial', sans-serif;
+  background: url('/public/logo.png') no-repeat center center fixed;
+  background-size: cover;
+  height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+
+#app {
+  width: 100%;
+  max-width: 420px;
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+.topbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 1rem;
+}
+
+#logo {
+  height: 32px;
+}
+
+.username {
+  font-size: 14px;
+  color: #555;
+}
+
+.cloud-area {
+  text-align: center;
+  padding: 2rem 1rem;
+}
+
+#tapButton {
+  font-size: 1.5rem;
+  padding: 1.2rem;
+  background: #4ea8de;
+  color: white;
+  border: none;
+  border-radius: 20px;
+  width: 100%;
+}
+
+#counter {
+  font-size: 1.4rem;
+  margin: 1rem 0;
+  color: #4ea8de;
+}
+
+#claimButton {
+  font-size: 1rem;
+  padding: 0.8rem;
+  background: #2f80ed;
+  color: white;
+  border: none;
+  border-radius: 12px;
+  width: 100%;
+}
+
+.bottom-nav {
+  display: flex;
+  justify-content: space-around;
+  padding: 1rem;
+  border-top: 1px solid #ccc;
+  background-color: #f9f9f9;
+}
+
+.bottom-nav button {
+  background: none;
+  border: none;
+  font-size: 0.9rem;
+  color: #4ea8de;
+}
