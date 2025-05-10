@@ -3,54 +3,49 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>TapCloud – World ID</title>
+  <title>TapCloud - World ID</title>
   <script src="https://developer.worldcoin.org/v1/world-id.js" defer></script>
 </head>
 <body>
-  <h1>TapCloud – Verify with World ID</h1>
+  <h1>🌍 TapCloud - World ID Verification</h1>
 
+  <!-- 🔘 World ID button will appear here -->
   <div
     id="world-id-container"
-    style="margin-top: 20px;"
+    class="world-id-widget"
+    data-app-id="app_8fb6097455c4b53031a8f1d50b03ac11"
+    data-action="orb-verification"
+    data-signal="user-session-123"
+    data-telemetry="false"
+    data-auto-close="true"
+    data-on-success="handleSuccess"
+    data-on-error="handleError"
   ></div>
 
   <script>
-    window.addEventListener("DOMContentLoaded", function () {
-      new WorldIDWidget({
-        enableTelemetry: true,
-        action_id: "orb-verification", // Ganti dengan action ID kamu
-        signal: "user-session-id",     // Bisa random string/user ID
-        app_id: "app_8fb6097455c4b53031a8f1d50b03ac11", // Ganti dengan App ID kamu
-        container_id: "world-id-container",
-        on_success: (proof) => {
-          console.log("✅ Proof received:", proof);
+    async function handleSuccess(proofData) {
+      console.log("✅ Proof from World ID:", proofData);
 
-          fetch("http://localhost:3000/verify-world-id", {
-            method: "POST",
-            headers: {
-              "Content-Type": "application/json"
-            },
-            body: JSON.stringify(proof)
-          })
-            .then(res => res.json())
-            .then(data => {
-              if (data.success) {
-                alert("✅ World ID verified!");
-              } else {
-                alert("❌ Verification failed: " + data.message);
-              }
-            })
-            .catch(err => {
-              console.error(err);
-              alert("❌ Network error.");
-            });
+      const response = await fetch("/verify-world-id", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json"
         },
-        on_error: (error) => {
-          console.error("❌ Widget error:", error);
-          alert("❌ Verification error.");
-        }
+        body: JSON.stringify(proofData)
       });
-    });
+
+      const result = await response.json();
+      if (result.success) {
+        alert("✅ World ID verified!");
+      } else {
+        alert("❌ Verification failed.");
+      }
+    }
+
+    function handleError(error) {
+      console.error("❌ World ID error:", error);
+      alert("Something went wrong during verification.");
+    }
   </script>
 </body>
 </html>
