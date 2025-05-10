@@ -1,10 +1,12 @@
+// =============================
 // TAP TO FARM + CLAIM SYSTEM
+// =============================
 let count = 0;
 const button = document.getElementById("tapButton");
 const counter = document.getElementById("counter");
 const claimButton = document.getElementById("claimButton");
 
-const claimCooldown = 24 * 60 * 60 * 1000; // 24 hours
+const claimCooldown = 24 * 60 * 60 * 1000; // 24 jam
 let lastClaim = parseInt(localStorage.getItem('lastClaim')) || 0;
 
 function updateClaimButton() {
@@ -15,9 +17,7 @@ function updateClaimButton() {
     const hours = Math.floor(timeRemaining / (1000 * 60 * 60));
     const minutes = Math.floor((timeRemaining % (1000 * 60 * 60)) / (1000 * 60));
     const seconds = Math.floor((timeRemaining % (1000 * 60)) / 1000);
-
-    const formatted = `${String(hours).padStart(2, '0')}:${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;
-    claimButton.textContent = `Claim available in ${formatted}`;
+    claimButton.textContent = `Claim available in ${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
     claimButton.disabled = true;
   } else {
     claimButton.textContent = "Claim Now";
@@ -41,20 +41,18 @@ claimButton.addEventListener("click", () => {
 button.addEventListener("click", () => {
   count += 1;
   counter.textContent = `${count} TCL`;
-
   counter.classList.add("count-animation");
   setTimeout(() => {
     counter.classList.remove("count-animation");
   }, 500);
 });
 
-// CSS animasi counter
+// Animasi counter (CSS inject)
 const style = document.createElement("style");
 style.innerHTML = `
   .count-animation {
     animation: counterBounce 0.5s ease;
   }
-
   @keyframes counterBounce {
     0% { transform: scale(1); }
     50% { transform: scale(1.1); }
@@ -63,19 +61,36 @@ style.innerHTML = `
 `;
 document.head.appendChild(style);
 
-// WORLD ID VERIFICATION (MiniKit JS Widget via CDN)
+// =============================
+// WORLD ID VERIFICATION
+// =============================
 window.addEventListener("DOMContentLoaded", () => {
   if (window.WorldIDWidget) {
     new window.WorldIDWidget({
-      action_id: "app_8fb6097455c4b53031a8f1d50b03ac11", // Ganti sesuai World App ID kamu
+      action_id: "app_8fb6097455c4b53031a8f1d50b03ac11", // ✅ Kamu sudah benar
       signal: "tapcloud_user_verification",
       app_name: "TapCloud",
       container_id: "world-id-container",
       theme: "light",
-      onSuccess: (proof) => {
+      onSuccess: async (proof) => {
         console.log("✅ Verified!", proof);
-        alert("Verification successful!");
-        // Kirim proof ke backend kalau diperlukan
+
+        // Kirim proof ke backend (opsional)
+        try {
+          const res = await fetch('/api/verify', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(proof)
+          });
+          const result = await res.json();
+          if (result.success) {
+            alert("✅ World ID verification successful!");
+          } else {
+            alert("❌ Server rejected verification: " + result.error);
+          }
+        } catch (err) {
+          alert("❌ Could not reach server.");
+        }
       },
       onError: (err) => {
         console.error("❌ Verification Error:", err);
